@@ -81,6 +81,7 @@ static const char* case_str[] = {
 // Get string depending on complexity_t
 static const char* complexity_str[] = {
     [oone_t] = "Size\tTime T(s)\tT/logn\t\tT/1\t\tT/n\n",
+    [ologn_t] = "Size\tTime T(s)\tT/1\t\tT/logn\t\tT/n\n",
     [on_t] = "Size\tTime T(s)\tT/logn\t\tT/n\t\tT/nlogn\n",
     [onlogn_t] = "Size\tTime T(s)\tT/n\t\tT/nlogn\t\tT/n^2\n",
     [on2_t] = "Size\tTime T(s)\tT/nlogn\t\tT/n^2\t\tT/n^3\n",
@@ -173,6 +174,19 @@ void ui_run() {
             case 'n':
                 benchmark(linear_search_t, average_t, result, RESULT_ROWS);
                 ui_print_result(linear_search_t, average_t, result, RESULT_ROWS);
+                break;
+            // Binary search
+            case 'o':
+                benchmark(binary_search_t, best_t, result, RESULT_ROWS);
+                ui_print_result(binary_search_t, best_t, result, RESULT_ROWS);
+                break;
+            case 'p':
+                benchmark(binary_search_t, worst_t, result, RESULT_ROWS);
+                ui_print_result(binary_search_t, worst_t, result, RESULT_ROWS);
+                break;
+            case 'q':
+                benchmark(binary_search_t, average_t, result, RESULT_ROWS);
+                ui_print_result(binary_search_t, average_t, result, RESULT_ROWS);
                 break;
             // Invalid input
             default:

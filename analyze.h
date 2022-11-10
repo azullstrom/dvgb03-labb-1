@@ -12,7 +12,7 @@
 typedef enum {
     null,
     oone_t,
-    //ologn,
+    ologn_t,
     on_t,
     onlogn_t,
     on2_t,

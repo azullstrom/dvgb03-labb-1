@@ -53,22 +53,27 @@ static double time_func_void(void (*func)(), int *arr, int size) {
 }
 
 // Returns key for given case
-static int get_key_by_case(case_t c, int *a, int size) {
-    int key_index;
+static int get_key_by_case(algorithm_t a, case_t c, int *arr, int size) {
+    int key_index = 0;
     srand(time(0));
-    c == best_t ? key_index = 0 : c == worst_t ? key_index = size - 1 : c == average_t ? key_index = rand() % size - 1 : exit(1);
-    return a[key_index];
-
+    if(a == linear_search_t) { 
+        c == best_t ? key_index = 0 : c == worst_t ? key_index = size - 1 : c == average_t ? key_index = rand() % size - 1 : exit(1);
+    } else if(a == binary_search_t) {
+        c == best_t ? key_index = (size - 1) / 2 : c == worst_t ? key_index = size - 1 : c == average_t ? key_index = rand() % size - 1 : exit(7);
+    } else {
+        return -1;
+    }
+    return arr[key_index];
 }
 
 // Runs the given algorithm with function pointer and calculates the time it takes to run it depending on array size
-static double time_func_bool(bool (*func)(), int *arr, int size, case_t c) {
+static double time_func_bool(bool (*func)(), int *arr, int size, algorithm_t a, case_t c) {
     struct timespec start, stop;
     double total_time = 0;
 
     warmup_processor(WARMUP_CYCLES);
     clock_gettime(CLOCK_MONOTONIC, &start);
-    func(arr, size, get_key_by_case(c, arr, size));
+    func(arr, size, get_key_by_case(a, c, arr, size));
     clock_gettime(CLOCK_MONOTONIC, &stop);
 
     total_time = (stop.tv_sec * BILLION + stop.tv_nsec) - (start.tv_sec * BILLION + start.tv_nsec);
@@ -91,6 +96,7 @@ static complexity_t get_complexity_t(algorithm_t a, case_t c) {
             c == best_t ? type = oone_t : c == worst_t ? type = on_t : c == average_t ? type = on_t : c == null; 
             break;
         case binary_search_t:
+            c == best_t ? type = oone_t : c == worst_t ? type = ologn_t : c == average_t ? type = ologn_t : c == null; 
             break;
     }
     return type;
@@ -115,17 +121,20 @@ static void set_buf(result_t *buf, algorithm_t a, case_t c, double total_time, i
 double get_complexity_number(complexity_t comp, int i, double total, int n) {
     double value = 0;
     switch(comp) {
-        case on_t:
-            i == FASTER ? value = total/log2(n) : i == BIG_O ? value = total/n : i == SLOWER ? value = total/(n*log2(n)) : exit(2);
+        case oone_t:
+            i == FASTER ? value = total/log2(n) : i == BIG_O ? value = total/1 : i == SLOWER ? value = total/n : exit(2);
             break;
-        case on2_t:
-            i == FASTER ? value = total/(n*log2(n)) : i == BIG_O ? value = total/pow(n,2) : i == SLOWER ? value = total/pow(n,3) : exit(3);
+        case ologn_t:
+            i == FASTER ? value = total/1 : i == BIG_O ? value = total/log2(n) : i == SLOWER ? value = total/n : exit(3);
+            break;
+        case on_t:
+            i == FASTER ? value = total/log2(n) : i == BIG_O ? value = total/n : i == SLOWER ? value = total/(n*log2(n)) : exit(4);
             break;
         case onlogn_t:
-            i == FASTER ? value = total/log2(n) : i == BIG_O ? value = total/(n*log2(n)) : i == SLOWER ? value = total/pow(n,2) : exit(4);
+            i == FASTER ? value = total/log2(n) : i == BIG_O ? value = total/(n*log2(n)) : i == SLOWER ? value = total/pow(n,2) : exit(5);
             break;
-        case oone_t:
-            i == FASTER ? value = total/log2(n) : i == BIG_O ? value = total/1 : i == SLOWER ? value = total/n : exit(5);
+        case on2_t:
+            i == FASTER ? value = total/(n*log2(n)) : i == BIG_O ? value = total/pow(n,2) : i == SLOWER ? value = total/pow(n,3) : exit(6);
             break;
         case null:
             break;
@@ -168,10 +177,10 @@ void benchmark(const algorithm_t a, const case_t c, result_t *buf, int n) {
                     total_time += time_func_void(&quick_sort, arr, arr_size);
                     break;
                 case linear_search_t:
-                    total_time += time_func_bool(&linear_search, arr, arr_size, c);
+                    total_time += time_func_bool(&linear_search, arr, arr_size, a, c);
                     break;
                 case binary_search_t:
-                    total_time += time_func_bool(&binary_search, arr, arr_size, c);
+                    total_time += time_func_bool(&binary_search, arr, arr_size, a, c);
                     break;
                 default:
                     break;            
