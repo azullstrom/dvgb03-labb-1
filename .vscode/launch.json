@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "stopAtEntry": true,
+      "externalConsole": false,
+      "cwd": "/Users/azullstrom/Documents/Karlstads Universitet/Datastrukturer & algoritmer/Laboration 1/lab1-perf",
+      "program": "/Users/azullstrom/Documents/Karlstads Universitet/Datastrukturer & algoritmer/Laboration 1/lab1-perf/build/Debug/outDebug",
+      "MIMode": "gdb"
+    }
+  ]
+}
