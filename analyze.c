@@ -9,6 +9,7 @@
 //
 // Private
 //
+// Sets the array elements in a certain order depending on case_t
 static void set_array(int *arr, case_t c, int size) {
     switch(c) {
         case best_t:
@@ -102,23 +103,8 @@ static complexity_t get_complexity_t(algorithm_t a, case_t c) {
     return type;
 }
 
-// Sets buffer size and time for the given algorithm and case
-static void set_buf(result_t *buf, algorithm_t a, case_t c, double total_time, int size, int i) {
-    double total_average = total_time / BILLION / ITERATIONS; // Converting to seconds and getting average value
-    buf[i].size = size;
-    buf[i].time = total_average;
-    buf[i].complexity = get_complexity_t(a, c);
-    buf[i].faster = get_complexity_number(buf[i].complexity, FASTER, buf[i].time, buf[i].size);
-    buf[i].big_o = get_complexity_number(buf[i].complexity, BIG_O, buf[i].time, buf[i].size);
-    buf[i].slower = get_complexity_number(buf[i].complexity, SLOWER, buf[i].time, buf[i].size);
-}
-
-//
-// Public
-//
-
 // Returns complexity number by Big-O-notation and index where i=0 is FASTER, i=1 BIG_O, i=2 SLOWER
-double get_complexity_number(complexity_t comp, int i, double total, int n) {
+static double get_complexity_number(complexity_t comp, int i, double total, int n) {
     double value = 0;
     switch(comp) {
         case oone_t:
@@ -141,6 +127,21 @@ double get_complexity_number(complexity_t comp, int i, double total, int n) {
     }
     return value;
 }
+
+// Sets buffer size and time for the given algorithm and case
+static void set_buf(result_t *buf, algorithm_t a, case_t c, double total_time, int size, int i) {
+    double total_average = total_time / BILLION / ITERATIONS; // Converting to seconds and getting average value
+    buf[i].size = size;
+    buf[i].time = total_average;
+    buf[i].complexity = get_complexity_t(a, c);
+    buf[i].faster = get_complexity_number(buf[i].complexity, FASTER, buf[i].time, buf[i].size);
+    buf[i].big_o = get_complexity_number(buf[i].complexity, BIG_O, buf[i].time, buf[i].size);
+    buf[i].slower = get_complexity_number(buf[i].complexity, SLOWER, buf[i].time, buf[i].size);
+}
+
+//
+// Public
+//
 
 // Restore result_t buffer
 void restore_result(result_t *buf, int n) {

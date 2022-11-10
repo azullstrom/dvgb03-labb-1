@@ -9,6 +9,7 @@
 #define BIG_O 1
 #define SLOWER 2
 
+// complexity_t defines different time complexities
 typedef enum {
     null,
     oone_t,
@@ -43,9 +44,6 @@ typedef struct {
     double slower;
     complexity_t complexity;
 } result_t;
-
-// Returns complexity number by Big-O-notation and index
-double get_complexity_number(complexity_t comp, int i, double total, int n);
 
 // Restore result_t buffer
 void restore_result(result_t *buf, int n);
