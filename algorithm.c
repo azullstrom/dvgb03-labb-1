@@ -2,7 +2,36 @@
 //
 // Private
 //
+static void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
 
+static int partition(int *a, int n) {
+    int pivot = a[0];
+    int lower = 1;
+    int upper = n - 1;
+
+    do {
+        while(a[lower] <= pivot && lower <= upper) {
+            lower++;
+        }
+        while(a[upper] > pivot && lower <= upper) {
+            upper--;
+        } 
+
+        if(lower <= upper) {
+            swap(&a[upper], &a[lower]);
+
+            upper--; 
+            lower++;
+        }
+    } while(lower <= upper); 
+    swap(&a[upper], &a[0]);
+
+    return upper;
+}
 //
 // Public
 //
@@ -32,28 +61,13 @@ void insertion_sort(int *a, int n) {
 }
 
 void quick_sort(int *a, int n) { 
-    int pivot = a[n-1]; 
-    int index_largest_el = 0; 
+    if(n <= 1) {
+        return;
+    }
+    int b = partition(a, n);
 
-    for(int i = 0; i < n - 1; i++) {
-        if(a[i] < pivot) {  
-            int temp = a[i]; 
-            a[i] = a[index_largest_el]; 
-            a[index_largest_el] = temp; 
-            index_largest_el++; 
-        } 
-    }
-    // Swap pivot with index_largest
-    int temp = a[index_largest_el]; 
-    a[index_largest_el] = a[n-1];
-    a[n-1] = temp; 
-
-    if(index_largest_el > 1) {
-        quick_sort(a, index_largest_el);
-    }
-    if(n - index_largest_el - 1 > 1) { 
-        quick_sort(a + index_largest_el + 1, n - index_largest_el - 1); 
-    }
+    quick_sort(a, b);
+    quick_sort((a + b + 1), (n - b - 1));
 }
 
 bool linear_search(const int *a, int n, int v) {

@@ -67,8 +67,8 @@ static const char* algorithm_str[] = {
     [bubble_sort_t] = "Bubble Sort",
     [insertion_sort_t] = "Insertion Sort",
     [quick_sort_t] = "Quick Sort",
-    [linear_search_t] = "Linear Sort",
-    [binary_search_t] = "Binary Sort",
+    [linear_search_t] = "Linear Search",
+    [binary_search_t] = "Binary Search",
 };
 
 // Get string depending on case_t

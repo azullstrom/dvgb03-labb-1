@@ -3,7 +3,6 @@
 
 #define SIZE_START 512
 #define ITERATIONS 4
-#define BILLION 1000000000
 #define WARMUP_CYCLES 1000000
 #define FASTER 0
 #define BIG_O 1
