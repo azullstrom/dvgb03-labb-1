@@ -20,18 +20,20 @@ static void set_array(int *arr, case_t c, int size) {
             for(int i = 0; i < size; i++) {
                 arr[i] = i + 1;
             }
-        break;
+            break;
         case worst_t:
             for(int i = 0; i < size; i++) {
                 arr[i] = size - i;
             }
-        break;
+            break;
         case average_t:
             srand(time(0));
             for(int i = 0; i < size; i++) {
                 arr[i] = rand() % size + 1;
             }
-        break;
+            break;
+        default:
+            break;
     }
 }
 
@@ -114,6 +116,8 @@ static complexity_t get_complexity_t(algorithm_t a, case_t c) {
         case binary_search_t:
             c == best_t ? type = oone_t : c == worst_t ? type = ologn_t : c == average_t ? type = ologn_t : nop(); 
             break;
+        default:
+            break;
     }
     return type;
 }
@@ -138,6 +142,8 @@ static double get_complexity_number(complexity_t comp, int i, double total, int 
             i == FASTER ? value = total/(n*log2(n)) : i == BIG_O ? value = total/pow(n,2) : i == SLOWER ? value = total/pow(n,3) : nop();
             break;
         case null:
+            break;
+        default:
             break;
     }
     return value;
@@ -177,7 +183,7 @@ void benchmark(const algorithm_t a, const case_t c, result_t *buf, int n) {
         
         for(int j = 0; j < ITERATIONS; j++) {
             arr_size = SIZE_START * pow(2, i);
-            int arr[arr_size];
+            int *arr = malloc(arr_size * sizeof(int));
 
             if(a == bubble_sort_t || a == insertion_sort_t) {
                 set_array(arr, c, arr_size);
@@ -205,6 +211,7 @@ void benchmark(const algorithm_t a, const case_t c, result_t *buf, int n) {
                 default:
                     break;            
             }
+            free(arr);
         }
         set_buf(buf, a, c, total_time, arr_size, i);
     }
