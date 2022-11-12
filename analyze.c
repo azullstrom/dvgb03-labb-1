@@ -50,9 +50,13 @@ static int get_key_by_case(algorithm_t a, case_t c, int *arr, int size) {
     int key_index = 0;
     srand(time(0));
     if(a == linear_search_t) { 
-        c == best_t ? key_index = 0 : c == worst_t ? key_index = size - 1 : c == average_t ? key_index = rand() % size - 1 : nop();
+        c == best_t ? key_index = 0 : 
+        c == worst_t ? key_index = size - 1 : 
+        c == average_t ? key_index = rand() % size - 1 : nop();
     } else if(a == binary_search_t) {
-        c == best_t ? key_index = (size - 1) / 2 : c == worst_t ? key_index = size - 1 : c == average_t ? key_index = rand() % size - 1 : nop();
+        c == best_t ? key_index = (size - 1) / 2 : 
+        c == worst_t ? key_index = size - 1 : 
+        c == average_t ? key_index = rand() % size - 1 : nop();
     } else {
         return -1;
     }
@@ -68,17 +72,56 @@ static void set_pivot_by_case(algorithm_t a, case_t c, int *arr, int size) {
     }
 }
 
+// Developed for algorithms and cases with any of these O-notations (fast O:s): O(1), O(logn), O(n).
+// Returns how many iterations the given algorithm will be tested. The return value is based on separate tests that has been done
+// for each algorithm and case. Some algorithms and cases are ignored because these are not so fast.
+static int get_iter_by_algo(algorithm_t a, case_t c) {
+    int n = ITERATIONS / 2; // Minimum iterations
+    switch(a) {
+        case bubble_sort_t:
+            c == best_t ? n = ITERATIONS * 3 : nop();
+            break;
+        case insertion_sort_t:
+            c == best_t ? n = ITERATIONS * 2500 : nop();
+            break;
+        case linear_search_t:
+            c == best_t ? n = ITERATIONS * 250000 : 
+            c == worst_t ? n = ITERATIONS * 2500 : 
+            c == average_t ? n = ITERATIONS * 2500 : nop();
+            break;
+        case binary_search_t:
+            n = ITERATIONS * 250000;
+            break;
+        case quick_sort_t:
+            break;
+        default:
+            break;
+    }
+    return n;
+}
+
 // Runs the given algorithm with function pointer and calculates the time it takes to run it depending on array size
-static double time_func_void(void (*func)(), int *arr, int size) {
+static double time_func_void(void (*func)(), int *arr, int size, algorithm_t a, case_t c) {
     clock_t start_t, stop_t;
     double total_time = 0;
-   
+    int n = get_iter_by_algo(a, c);
+
+    // Creating 2D temp[n][size] so func always gets an unique unsorted array. Just so we get exact measures.
+    // The malloc will in some n cases be large, so the time to execute the loop will increase in these cases.
+    int (*temp)[size] = malloc(sizeof(int[n][size]));
+    for(int i = 0; i < n; i++) 
+        for(int j = 0; j < size; j++) temp[i][j] = arr[j];
+
+    // TEST START //
+    // Running functions n times so fast algorithms will not run too fast for the clock to register.
     warmup_processor(WARMUP_CYCLES);
     start_t = clock();
-    func(arr, size);
+    for(int i = 0; i < n; i++)
+        func(temp[i], size); 
     stop_t = clock();
 
-    total_time = (double)(stop_t - start_t) / CLOCKS_PER_SEC;
+    total_time = ((double)(stop_t - start_t) / CLOCKS_PER_SEC) / n;
+    free(temp);
 
     return total_time;
 }
@@ -87,13 +130,18 @@ static double time_func_void(void (*func)(), int *arr, int size) {
 static double time_func_bool(bool (*func)(), int *arr, int size, algorithm_t a, case_t c) {
     clock_t start_t, stop_t;
     double total_time = 0;
+    int n = get_iter_by_algo(a, c);
+    int key = get_key_by_case(a, c, arr, size);
 
+    // TEST START //
+    // Running functions n times so fast algorithms will not run too fast for the clock to register.
     warmup_processor(WARMUP_CYCLES);
     start_t = clock();
-    func(arr, size, get_key_by_case(a, c, arr, size));
+    for(int i = 0; i < n; i++)
+        func(arr, size, key); 
     stop_t = clock();
 
-    total_time = (double)(stop_t - start_t) / CLOCKS_PER_SEC;
+    total_time = ((double)(stop_t - start_t) / CLOCKS_PER_SEC) / n;
 
     return total_time;
 }
@@ -105,16 +153,24 @@ static complexity_t get_complexity_t(algorithm_t a, case_t c) {
     switch(a) {
         case bubble_sort_t:
         case insertion_sort_t:
-            c == best_t ? type = on_t : c == worst_t ? type = on2_t : c == average_t ? type = on2_t : nop(); 
+            c == best_t ? type = on_t : 
+            c == worst_t ? type = on2_t : 
+            c == average_t ? type = on2_t : nop(); 
             break;
         case quick_sort_t:
-            c == best_t ? type = onlogn_t : c == worst_t ? type = on2_t : c == average_t ? type = onlogn_t : nop(); 
+            c == best_t ? type = onlogn_t : 
+            c == worst_t ? type = on2_t : 
+            c == average_t ? type = onlogn_t : nop(); 
             break;
         case linear_search_t:
-            c == best_t ? type = oone_t : c == worst_t ? type = on_t : c == average_t ? type = on_t : nop(); 
+            c == best_t ? type = oone_t : 
+            c == worst_t ? type = on_t : 
+            c == average_t ? type = on_t : nop(); 
             break;
         case binary_search_t:
-            c == best_t ? type = oone_t : c == worst_t ? type = ologn_t : c == average_t ? type = ologn_t : nop(); 
+            c == best_t ? type = oone_t : 
+            c == worst_t ? type = ologn_t : 
+            c == average_t ? type = ologn_t : nop(); 
             break;
         default:
             break;
@@ -127,19 +183,29 @@ static double get_complexity_number(complexity_t comp, int i, double total, int 
     double value = 0;
     switch(comp) {
         case oone_t:
-            i == FASTER ? value = total/log2(n) : i == BIG_O ? value = total/1 : i == SLOWER ? value = total/n : nop();
+            i == FASTER ? value = total/log2(n) : 
+            i == BIG_O ? value = total/1 : 
+            i == SLOWER ? value = total/n : nop();
             break;
         case ologn_t:
-            i == FASTER ? value = total/1 : i == BIG_O ? value = total/log2(n) : i == SLOWER ? value = total/n : nop();
+            i == FASTER ? value = total/1 : 
+            i == BIG_O ? value = total/log2(n) : 
+            i == SLOWER ? value = total/n : nop();
             break;
         case on_t:
-            i == FASTER ? value = total/log2(n) : i == BIG_O ? value = total/n : i == SLOWER ? value = total/(n*log2(n)) : nop();
+            i == FASTER ? value = total/log2(n) : 
+            i == BIG_O ? value = total/n : 
+            i == SLOWER ? value = total/(n*log2(n)) : nop();
             break;
         case onlogn_t:
-            i == FASTER ? value = total/n : i == BIG_O ? value = total/(n*log2(n)) : i == SLOWER ? value = total/pow(n,2) : nop();
+            i == FASTER ? value = total/n : 
+            i == BIG_O ? value = total/(n*log2(n)) : 
+            i == SLOWER ? value = total/pow(n,2) : nop();
             break;
         case on2_t:
-            i == FASTER ? value = total/(n*log2(n)) : i == BIG_O ? value = total/pow(n,2) : i == SLOWER ? value = total/pow(n,3) : nop();
+            i == FASTER ? value = total/(n*log2(n)) : 
+            i == BIG_O ? value = total/pow(n,2) : 
+            i == SLOWER ? value = total/pow(n,3) : nop();
             break;
         case null:
             break;
@@ -193,14 +259,14 @@ void benchmark(const algorithm_t a, const case_t c, result_t *buf, int n) {
 
             switch(a) {
                 case bubble_sort_t:
-                    total_time += time_func_void(&bubble_sort, arr, arr_size);
+                    total_time += time_func_void(&bubble_sort, arr, arr_size, a, c);
                     break;
                 case insertion_sort_t:
-                    total_time += time_func_void(&insertion_sort, arr, arr_size);
+                    total_time += time_func_void(&insertion_sort, arr, arr_size, a, c);
                     break;    
                 case quick_sort_t:
                     set_pivot_by_case(a, c, arr, arr_size);
-                    total_time += time_func_void(&quick_sort, arr, arr_size);
+                    total_time += time_func_void(&quick_sort, arr, arr_size, a, c);
                     break;
                 case linear_search_t:
                     total_time += time_func_bool(&linear_search, arr, arr_size, a, c);
