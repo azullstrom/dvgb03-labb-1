@@ -91,7 +91,7 @@ bool binary_search(const int *a, int n, int v) {
             return true;
         } else if(v > a[mid]) { // v is on the right side
             low = mid + 1;
-        } else { // x is on the left side
+        } else { // v is on the left side
             high = mid - 1;
         }  
     }
