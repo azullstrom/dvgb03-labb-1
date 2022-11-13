@@ -122,7 +122,7 @@ static double time_func_void(void (*func)(), int *arr, int size, algorithm_t a, 
     int n = get_iter_by_algo(a, c);
 
     // Creating 2D temp[n][size] so func() always gets an unique copy of original array. This is so we won't change the same array
-    // back and forth. The malloc will in some n cases be large, so the time to execute the loop will increase for these cases.
+    // back and forth. The malloc will in some n cases be large, so the time to execute the function will increase for these cases.
     int (*temp)[size] = malloc(sizeof(int[n][size]));
     for(int i = 0; i < n; i++) 
         for(int j = 0; j < size; j++) 
