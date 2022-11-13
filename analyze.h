@@ -1,3 +1,6 @@
+// Namn: Anders Ullström 
+// Mail: zefaniasmusic@gmail.com
+
 #ifndef ANALYZE_H
 #define ANALYZE_H
 

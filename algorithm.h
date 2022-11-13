@@ -1,3 +1,6 @@
+// Namn: Anders Ullström 
+// Mail: zefaniasmusic@gmail.com
+
 #ifndef ALGORITHM_H
 #define ALGORITHM_H
 

@@ -1,4 +1,8 @@
+// Namn: Anders Ullström 
+// Mail: zefaniasmusic@gmail.com
+
 #include "algorithm.h"
+
 //
 // Private
 //

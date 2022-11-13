@@ -1,3 +1,6 @@
+// Namn: Anders Ullström 
+// Mail: zefaniasmusic@gmail.com
+
 #include "ui.h"
 
 int main() {

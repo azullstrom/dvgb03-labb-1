@@ -1,9 +1,11 @@
-#include "ui.h"
+// Namn: Anders Ullström 
+// Mail: zefaniasmusic@gmail.com
 
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 
+#include "ui.h"
 #include "analyze.h"
 #include "io.h"
 

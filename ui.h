@@ -1,3 +1,6 @@
+// Namn: Anders Ullström 
+// Mail: zefaniasmusic@gmail.com
+
 #ifndef UI_H
 #define UI_H
 
