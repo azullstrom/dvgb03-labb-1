@@ -40,18 +40,17 @@ static int partition(int *a, int n) {
 // Public
 //
 void bubble_sort(int *a, int n) {
-    bool swap = false;
+    bool swapped;
 
-    for(int i = 0; i < n; i++) {
-        for(int j = i + 1; j < n; j++) {
-            if(a[i] > a[j]) {
-                int temp = a[i];
-                a[i] = a[j];
-                a[j] = temp;
-                swap = true;
+    for(int i = 0; i < n - 1; i++) { 
+        swapped = false;
+        for(int j = 0; j < n - i - 1; j++) { 
+            if(a[j] > a[j+1]) {
+                swap(&a[j], &a[j+1]);
+                swapped = true;
             }
-            if(!swap) break;
         }
+        if(!swapped) break;
     }
 }
 
