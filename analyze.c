@@ -25,7 +25,6 @@ static void set_array(int *arr, case_t c, int size) {
                 arr[i] = size - i;    
             break;
         case average_t:
-            srand(time(0));
             for(int i = 0; i < size; i++) 
                 arr[i] = rand() % size + 1;
             break;
@@ -45,7 +44,6 @@ static void warmup_processor(int n) {
 // Returns key for given case
 static int get_key_by_case(algorithm_t a, case_t c, int *arr, int size) {
     int key_index = 0;
-    srand(time(0));
 
     if(a == linear_search_t) { 
         switch(c) {
@@ -85,6 +83,7 @@ static void set_pivot_by_case(algorithm_t a, case_t c, int *arr, int size) {
 // for each algorithm and case. Some algorithms and cases are ignored because these are not so fast.
 static int get_iter_by_algo(algorithm_t a, case_t c) {
     int n = ITERATIONS; // Minimum iterations
+    
     switch(a) {
         case bubble_sort_t:
         case insertion_sort_t:
@@ -111,6 +110,7 @@ static int get_iter_by_algo(algorithm_t a, case_t c) {
         default:
             break;
     }
+
     return n;
 }
 
@@ -122,7 +122,7 @@ static double time_func_void(void (*func)(), int *arr, int size, algorithm_t a, 
     int n = get_iter_by_algo(a, c);
 
     // Creating 2D temp[n][size] so func() always gets an unique copy of original array. This is so we won't change the same array
-    // back and forth. The malloc will in some n cases be large, so the time to execute the function will increase for these cases.
+    // back and forth. The malloc will in some n cases be large, so the time to execute time_func_void will increase for these cases.
     int (*temp)[size] = malloc(sizeof(int[n][size]));
     for(int i = 0; i < n; i++) 
         for(int j = 0; j < size; j++) 
@@ -138,7 +138,7 @@ static double time_func_void(void (*func)(), int *arr, int size, algorithm_t a, 
     // TEST END //
 
     total_time = (stop.tv_sec * BILLION + stop.tv_nsec) - (start.tv_sec * BILLION + start.tv_nsec);
-    total_time = total_time / BILLION / n; // Converting to seconds
+    total_time = total_time / BILLION / n; // Converting to seconds and getting average
     free(temp);
 
     return total_time;
@@ -293,6 +293,8 @@ void restore_result(result_t *buf, int n) {
 }
 
 void benchmark(const algorithm_t a, const case_t c, result_t *buf, int n) {
+    srand(time(0)); // Setting seed for rand() functions
+
     for(int i = 0; i < n; i++) {
         double total_time = 0;
         int arr_size = 0;
@@ -312,7 +314,7 @@ void benchmark(const algorithm_t a, const case_t c, result_t *buf, int n) {
                 total_time = time_func_void(&insertion_sort, arr, arr_size, a, c);
                 break;    
             case quick_sort_t:
-                set_pivot_by_case(a, c, arr, arr_size);
+                set_pivot_by_case(a, c, arr, arr_size); // Setting arr[0] value depending on case
                 total_time = time_func_void(&quick_sort, arr, arr_size, a, c);
                 break;
             case linear_search_t:
